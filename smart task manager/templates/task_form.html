@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title-bar">
+  <div>
+    <h2>{{ task and 'Edit Task' or 'New Task' }}</h2>
+    <p class="text-muted">Provide task details, assignment, priority, and deadlines.</p>
+  </div>
+  <a href="{{ url_for('main.tasks') }}" class="btn btn-outline-primary">Back to tasks</a>
+</div>
+<div class="glass-panel">
+  <form method="post">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" name="title" value="{{ task.title if task else '' }}" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Project</label>
+        <select class="form-select" name="project_id" required>
+          <option value="">Select project</option>
+          {% for project in projects %}
+          <option value="{{ project.id }}" {% if task and task.project_id == project.id %}selected{% endif %}>{{ project.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-select" name="status">
+          {% for status in ['TODO', 'IN_PROGRESS', 'DONE'] %}
+          <option value="{{ status }}" {% if task and task.status == status %}selected{% endif %}>{{ status.replace('_',' ') }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Priority</label>
+        <select class="form-select" name="priority">
+          {% for priority in ['LOW', 'MEDIUM', 'HIGH'] %}
+          <option value="{{ priority }}" {% if task and task.priority == priority %}selected{% endif %}>{{ priority }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Assigned to</label>
+        <select class="form-select form-select-lg" name="assigned_to">
+          <option value="">Unassigned</option>
+          {% for user in members %}
+          <option value="{{ user.id }}" {% if task and task.assigned_to == user.id %}selected{% endif %}>{{ user.username }}</option>
+          {% endfor %}
+          {% if not members %}
+          <option disabled>No members found</option>
+          {% endif %}
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Due date</label>
+        <input type="date" class="form-control" name="due_date" value="{{ task.due_date if task and task.due_date }}">
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" name="description" rows="5">{{ task.description if task else '' }}</textarea>
+      </div>
+      <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-soft-primary btn-lg">{{ task and 'Save Changes' or 'Create Task' }}</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

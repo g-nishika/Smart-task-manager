@@ -1,0 +1,72 @@
+﻿{% extends 'base.html' %}
+{% block content %}
+<div class="page-title-bar mb-4">
+  <div>
+    <h2>Tasks</h2>
+    <p class="text-muted">Browse all tasks, update status, and keep priorities aligned.</p>
+  </div>
+  <div class="d-flex gap-2 flex-wrap">
+    <input id="task-search" type="search" class="form-control form-control-sm" placeholder="Search tasks..." style="min-width:260px;">
+    <a href="{{ url_for('main.create_task') }}" class="btn btn-primary">New Task</a>
+  </div>
+</div>
+<div class="card glass-panel">
+  <div class="table-responsive">
+    <table id="tasks-table" class="table table-hover mb-0 align-middle table-sticky">
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Project</th>
+          <th>Assigned To</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Due Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in tasks %}
+        <tr>
+          <td>{{ task.title }}</td>
+          <td>{{ task.project.title }}</td>
+          <td>
+            {% if task.assignee %}
+            <div class="d-flex align-items-center gap-2">
+              <span class="avatar avatar-sm">{{ task.assignee.username[:1] }}</span>
+              <span>{{ task.assignee.username }}</span>
+            </div>
+            {% else %}
+            <span class="badge badge-pill bg-secondary text-white">Unassigned</span>
+            {% endif %}
+          </td>
+          <td><span class="task-priority {% if task.priority == 'LOW' %}priority-low{% elif task.priority == 'MEDIUM' %}priority-medium{% else %}priority-high{% endif %}">{{ task.priority }}</span></td>
+          <td><span class="status-pill {% if task.status == 'DONE' %}done{% elif task.status == 'IN_PROGRESS' %}in-progress{% else %}todo{% endif %}">{{ task.status.replace('_',' ') }}</span></td>
+          <td>{{ task.due_date or 'No due date' }}</td>
+          <td>
+            {% if current_user.role == 'ADMIN' %}
+            <div class="d-flex gap-2 flex-wrap">
+              <a href="{{ url_for('main.edit_task', task_id=task.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+              <form method="post" action="{{ url_for('main.delete_task', task_id=task.id) }}" class="d-inline-block" onsubmit="return confirmDelete();">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </div>
+            {% else %}
+            <form method="post" action="{{ url_for('main.update_task_status', task_id=task.id) }}" class="d-flex gap-2 flex-wrap">
+              <select class="form-select form-select-sm" name="status">
+                <option value="TODO" {% if task.status == 'TODO' %}selected{% endif %}>TODO</option>
+                <option value="IN_PROGRESS" {% if task.status == 'IN_PROGRESS' %}selected{% endif %}>IN PROGRESS</option>
+                <option value="DONE" {% if task.status == 'DONE' %}selected{% endif %}>DONE</option>
+              </select>
+              <button type="submit" class="btn btn-sm btn-outline-success">Update</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center p-4 text-muted">No tasks to display. Create a new task to get started.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

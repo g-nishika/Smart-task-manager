@@ -1,0 +1,54 @@
+﻿{% extends 'base.html' %}
+{% block auth_content %}
+<div class="auth-screen">
+  <div class="auth-panel auth-hero">
+    <div>
+      <span class="badge bg-gradient-primary text-white mb-3">Start with the team</span>
+      <h1>Organize work in a beautiful hub</h1>
+      <p>Sign up to centralize task planning, monitor progress, and collaborate with your team in one polished experience.</p>
+      <div class="mt-4 d-flex gap-3 flex-wrap">
+        <span class="badge bg-white text-primary px-3 py-2 shadow-sm">Projects</span>
+        <span class="badge bg-white text-primary px-3 py-2 shadow-sm">Collaboration</span>
+        <span class="badge bg-white text-primary px-3 py-2 shadow-sm">Productivity</span>
+      </div>
+    </div>
+  </div>
+  <div class="auth-panel glass-card">
+    <div class="mb-4 text-center">
+      <h3 class="mb-1">Create your account</h3>
+      <p class="text-muted mb-0">Join your team and start managing tasks instantly.</p>
+    </div>
+    <form method="post" action="{{ url_for('auth.signup') }}">
+      <div class="mb-3 form-floating">
+        <input type="text" class="form-control" id="signupUsername" name="username" placeholder="Username" required>
+        <label for="signupUsername">Username</label>
+      </div>
+      <div class="mb-3 form-floating">
+        <input type="email" class="form-control" id="signupEmail" name="email" placeholder="Email address" required>
+        <label for="signupEmail">Email address</label>
+      </div>
+      <div class="mb-3 form-floating position-relative">
+        <input type="password" class="form-control" id="signupPassword" name="password" placeholder="Password" required>
+        <label for="signupPassword">Password</label>
+        <button type="button" class="password-toggle btn btn-sm btn-soft-white position-absolute top-50 end-0 translate-middle-y me-2" data-target="#signupPassword"><i class="bi bi-eye"></i></button>
+      </div>
+      <div class="mb-3 form-floating position-relative">
+        <input type="password" class="form-control" id="signupConfirm" name="confirm_password" placeholder="Confirm password" required>
+        <label for="signupConfirm">Confirm Password</label>
+        <button type="button" class="password-toggle btn btn-sm btn-soft-white position-absolute top-50 end-0 translate-middle-y me-2" data-target="#signupConfirm"><i class="bi bi-eye"></i></button>
+      </div>
+      {% if can_choose_role %}
+      <div class="mb-3 form-floating">
+        <select class="form-select" id="signupRole" name="role">
+          <option value="MEMBER" selected>Member</option>
+          <option value="ADMIN">Administrator</option>
+        </select>
+        <label for="signupRole">Account role</label>
+      </div>
+      {% endif %}
+      <button type="submit" class="btn btn-primary w-100 py-3">Create account</button>
+    </form>
+    <p class="text-center text-muted mt-4 mb-0">Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+  </div>
+</div>
+{% endblock %}

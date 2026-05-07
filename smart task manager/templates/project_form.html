@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title-bar">
+  <div>
+    <h2>{{ project and 'Edit Project' or 'New Project' }}</h2>
+    <p class="text-muted">Manage the project title, owner, and description details.</p>
+  </div>
+  <a href="{{ url_for('main.projects') }}" class="btn btn-outline-primary">Back to projects</a>
+</div>
+<div class="glass-panel">
+  <form method="post">
+    <div class="row g-4">
+      <div class="col-12">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" name="title" value="{{ project.title if project else '' }}" placeholder="Project title" required>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" name="description" rows="6" placeholder="Project description">{{ project.description if project else '' }}</textarea>
+      </div>
+      <div class="col-12 d-flex justify-content-end">
+        <button type="submit" class="btn btn-soft-primary btn-lg">{{ project and 'Update Project' or 'Create Project' }}</button>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

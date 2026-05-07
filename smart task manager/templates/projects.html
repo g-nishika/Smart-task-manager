@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="page-title-bar">
+  <div>
+    <h2>Projects</h2>
+    <p class="text-muted">Create and manage strategic initiatives for your teams.</p>
+  </div>
+  <a href="{{ url_for('main.create_project') }}" class="btn btn-soft-primary btn-lg">
+    <i class="bi bi-folder-plus me-2"></i>New Project
+  </a>
+</div>
+<div class="glass-panel">
+  <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-4">
+    <div>
+      <h5 class="mb-1">Active project portfolio</h5>
+      <p class="text-muted mb-0">All current initiatives, owners, and task totals in one place.</p>
+    </div>
+    <span class="badge bg-gradient-secondary text-white py-2 px-3">{{ projects|length }} projects</span>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover table-sticky mb-0 align-middle">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Description</th>
+          <th>Created by</th>
+          <th>Tasks</th>
+          <th>Created At</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for project in projects %}
+        <tr>
+          <td>{{ project.title }}</td>
+          <td>{{ project.description[:80] }}{% if project.description|length > 80 %}...{% endif %}</td>
+          <td>{{ project.creator.username }}</td>
+          <td>{{ project.tasks|length }}</td>
+          <td>{{ project.created_at.strftime('%Y-%m-%d') }}</td>
+          <td>
+            <div class="d-flex gap-2">
+              <a href="{{ url_for('main.edit_project', project_id=project.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
+              <form method="post" action="{{ url_for('main.delete_project', project_id=project.id) }}" class="d-inline-block" onsubmit="return confirmDelete();">
+                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center py-5">No projects found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
